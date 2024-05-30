@@ -13,10 +13,6 @@ export class UpdateExerciseDto extends Exercise {
   description?: string;
 
   @IsOptional()
-  @IsString()
-  type?: string;
-
-  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => WorkoutExercise)
   workoutExercise?: WorkoutExercise[];

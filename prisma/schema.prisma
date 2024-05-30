@@ -14,57 +14,30 @@ model User {
   password String
 
   name String
-  programs Program[] @relation("UserPrograms") // relação com Programs
 }
 
 model Exercise {
-  id Int @id @default(autoincrement())
-
-  name String
+  id          Int     @id @default(autoincrement())
+  name        String
   description String?
-  type String // parte do corpo
-
   workoutExercises WorkoutExercise[]
 }
 
 model Workout {
-  id Int @id @default(autoincrement())
-
-  name String
+  id          Int      @id @default(autoincrement())
+  name        String
   description String?
-  exercises WorkoutExercise[]
-  programs ProgramWorkout[]
+  createdAt   DateTime @default(now())
+  workoutExercises WorkoutExercise[]
 }
 
 model WorkoutExercise {
-  id Int @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
+  workoutId   Int
+  exerciseId  Int
+  reps        String
 
-  workoutId Int
-  exerciseId Int
-  sets Int
-  reps Int
-
-  workout Workout @relation(fields: [workoutId], references: [id])
-  exercise Exercise @relation(fields: [exerciseId], references: [id])
+  workout     Workout  @relation(fields: [workoutId], references: [id])
+  exercise    Exercise @relation(fields: [exerciseId], references: [id])
 }
 
-model Program {
-  id Int @id @default(autoincrement())
-
-  name String
-  description String?
-  userId Int
-  user User @relation("UserPrograms", fields: [userId], references: [id])
-  programWorkouts ProgramWorkout[]
-}
-
-model ProgramWorkout {
-  id Int @id @default(autoincrement())
-
-  programId Int
-  workoutId Int
-  day String // Dia da semana
-
-  program Program @relation(fields: [programId], references: [id])
-  workout Workout @relation(fields: [workoutId], references: [id])
-}

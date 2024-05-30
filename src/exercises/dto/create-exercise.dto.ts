@@ -9,11 +9,7 @@ export class CreateExerciseDto extends Exercise {
 
     @IsString()
     description?: string;
-
-    @IsString()
-    type: string;
-
-
+    
     @ValidateNested({ each: true })
     @Type(() => WorkoutExercise)
     workoutExercise: WorkoutExercise[];
