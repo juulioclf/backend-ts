@@ -19,19 +19,12 @@ export class WorkoutService {
 
     for (const item of items) {
       const { name: itemName, exercises } = item;
-      const workoutItem = await this.prisma.workoutItem.create({
-        data: {
-          name: itemName,
-          workoutId: workout.id,
-        },
-      });
 
       for (const exercise of exercises) {
         const { exerciseId, reps } = exercise;
         await this.prisma.workoutExercise.create({
           data: {
             workoutId: workout.id,
-            workoutItemId: workoutItem.id,
             exerciseId,
             reps,
           },
@@ -45,7 +38,11 @@ export class WorkoutService {
   async findAll() {
     return await this.prisma.workout.findMany({
       include: {
-        workoutExercises: true,
+        workoutExercises: {
+          include: {
+            exercise: true,
+          },
+        },
       },
     });
   }
@@ -54,7 +51,11 @@ export class WorkoutService {
     const workout = await this.prisma.workout.findUnique({
       where: { id: parseInt(id, 10) },
       include: {
-        workoutExercises: true,
+        workoutExercises: {
+          include: {
+            exercise: true,
+          },
+        },
       },
     });
     if (!workout) {
@@ -103,13 +104,25 @@ export class WorkoutService {
   async delete(id: string) {
     const workout = await this.prisma.workout.findUnique({
       where: { id: parseInt(id, 10) },
+      include: {
+        workoutExercises: true,
+      },
     });
+  
     if (!workout) {
       throw new NotFoundException(`Workout with ID ${id} not found`);
     }
-    await this.prisma.workout.delete({
-      where: { id: parseInt(id, 10) },
+  
+
+    await this.prisma.workoutExercise.deleteMany({
+      where: { workoutId: workout.id },
     });
+
+    await this.prisma.workout.delete({
+      where: { id: workout.id },
+    });
+  
     return { message: `Workout with ID ${id} deleted successfully` };
   }
+  
 }

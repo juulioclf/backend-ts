@@ -1,6 +1,6 @@
 import { IsString, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateExerciseDto } from 'src/exercises/dto/create-exercise.dto';
+import { CreateExerciseDto } from './create-exercise.dto';
 
 export class CreateWorkoutItemDto {
   @IsString()
